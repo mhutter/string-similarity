@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require 'bundler/setup'
+require 'string/similarity'
+
+require 'pry'
+Pry.start
