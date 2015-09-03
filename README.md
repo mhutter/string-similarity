@@ -1,4 +1,4 @@
-# String::Similarity
+# String::Similarity [![Build Status](https://travis-ci.org/mhutter/string-similarity.svg)](https://travis-ci.org/mhutter/string-similarity)
 
 Library for calculating the similarity of two strings.
 
