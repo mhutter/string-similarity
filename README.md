@@ -26,7 +26,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'string-similarity'
+
+# Call the methods on the module
+String::Similarity.cosine 'foo', 'bar'
+# => 0.0
+String::Similarity.cosine 'mine', 'thyne'
+# => 0.4472135954999579
+String::Similarity.cosine 'foo', 'foo'
+# => 1.0
+
+# or call on a string directly
+'string'.cosine_similarity_to 'strong'
+# => 0.8333333333333335
+```
 
 ## Development
 
