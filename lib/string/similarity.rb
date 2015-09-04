@@ -15,6 +15,9 @@ class String
     # {https://en.wikipedia.org/wiki/Cosine_similarity Cosine similarity}
     # of two strings.
     #
+    # For an explanation of the Cosine similarity of two strings read
+    # {http://stackoverflow.com/a/1750187/405454 this excellent SO answer}.
+    #
     # @param str1 [String] first string
     # @param str2 [String] second string
     # @return [Float] cosine distance of the two arguments.
@@ -41,7 +44,8 @@ class String
     # create a vector from +str+
     #
     # @example
-    #     vector('hello') # => {"h"=>1, "e"=>1, "l"=>2, "o"=>1}
+    #     v1 = vector('hello') # => {"h"=>1, "e"=>1, "l"=>2, "o"=>1}
+    #     v1["x"] # => 0
     def vector(str)
       v = Hash.new(0)
       str.each_char { |c| v[c] += 1 }

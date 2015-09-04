@@ -27,6 +27,10 @@ RSpec.describe String::Similarity do
       expect(s1).to eq s2
       expect(klass.cosine('JlmotLlm', 'JimotJlm')).to be_within(0.001).of(0.833)
     end
+
+    it 'returns values <= 1.0' do
+      expect(klass.cosine('foo', 'fooaf')).to be <= 1.00000
+    end
   end
 end
 
