@@ -32,13 +32,39 @@ RSpec.describe String::Similarity do
       expect(klass.cosine('foo', 'fooaf')).to be <= 1.00000
     end
   end
+
+  context '#levenshtein_distance' do
+    it 'returns 0 for identical strings' do
+      expect(klass.levenshtein_distance('foo', 'foo')).to eq 0
+      expect(klass.levenshtein_distance('', '')).to eq 0
+    end
+
+    it 'returns the other strings length if one string is empty' do
+      expect(klass.levenshtein_distance('four', '')).to eq 4
+      expect(klass.levenshtein_distance('', 'four')).to eq 4
+    end
+
+    it 'returns the correct distance' do
+      # Wikipedia example
+      expect(klass.levenshtein_distance('kitten', 'sitting')).to eq 3
+      expect(klass.levenshtein_distance('sitting', 'kitten')).to eq 3
+      expect(klass.levenshtein_distance('Saturday', 'Sunday')).to eq 3
+      expect(klass.levenshtein_distance('Sunday', 'Saturday')).to eq 3
+    end
+  end
+
+  context '#levenshtein' do
+  end
 end
 
 RSpec.describe String do
-  context '#cosine_similarity_to' do
-    it 'calls the appropriate method' do
-      expect(String::Similarity).to receive(:cosine).with('this', 'other')
-      'this'.cosine_similarity_to('other')
-    end
+  it '#cosine_similarity_to calls the appropriate method' do
+    expect(String::Similarity).to receive(:cosine).with('this', 'other')
+    'this'.cosine_similarity_to('other')
+  end
+
+  it '#levenshtein_distance_to calls the appropriate method' do
+    expect(String::Similarity).to receive(:levenshtein_distance).with('a', 'b')
+    'a'.levenshtein_distance_to('b')
   end
 end
