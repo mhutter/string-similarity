@@ -54,6 +54,20 @@ RSpec.describe String::Similarity do
   end
 
   context '#levenshtein' do
+    it 'returns 1 for identical strings' do
+      expect(klass.levenshtein('foo', 'foo')).to eq 1.0
+      expect(klass.levenshtein('', '')).to eq 1.0
+    end
+
+    it 'returns 0 if one string is empty' do
+      expect(klass.levenshtein('', 'foo')).to eq 0.0
+      expect(klass.levenshtein('foo', '')).to eq 0.0
+    end
+
+    it 'does stuff' do
+      expect(klass.levenshtein('kitten', 'sitting')).to eq (1.0/3)
+      expect(klass.levenshtein('foo', 'far')).to eq 0.5
+    end
   end
 end
 
@@ -66,5 +80,10 @@ RSpec.describe String do
   it '#levenshtein_distance_to calls the appropriate method' do
     expect(String::Similarity).to receive(:levenshtein_distance).with('a', 'b')
     'a'.levenshtein_distance_to('b')
+  end
+
+  it '#levenshtein_similarity_to calls the appropriate method' do
+    expect(String::Similarity).to receive(:levenshtein).with('a', 'b')
+    'a'.levenshtein_similarity_to('b')
   end
 end

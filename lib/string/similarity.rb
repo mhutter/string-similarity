@@ -1,31 +1,36 @@
 require 'string/similarity/version'
 
 class String
-  # Returns the cosine similarity to `other`
+  # Returns the cosine similarity to +other+
   # @see String::Similarity#cosine
   def cosine_similarity_to(other)
     String::Similarity.cosine(self, other)
   end
 
-  # Returns the Levenshtein distance to `other`
+  # Returns the Levenshtein distance to +other+
   # @see String::Similarity.levenshtein_distance
   def levenshtein_distance_to(other)
     String::Similarity.levenshtein_distance(self, other)
   end
 
+  # Returns the Levenshtein similarity to +other+
+  # @see String::Similarity.levenshtein
+  def levenshtein_similarity_to(other)
+    String::Similarity.levenshtein(self, other)
+  end
+
   # +String::Similarity+ provides various methods for
   # calculating string distances.
   module Similarity extend self
-    # Calcuate the
-    # {https://en.wikipedia.org/wiki/Cosine_similarity Cosine similarity}
-    # of two strings.
+    # Calcuate the {https://en.wikipedia.org/wiki/Cosine_similarity
+    # Cosine similarity} of two strings.
     #
     # For an explanation of the Cosine similarity of two strings read
     # {http://stackoverflow.com/a/1750187/405454 this excellent SO answer}.
     #
     # @param str1 [String] first string
     # @param str2 [String] second string
-    # @return [Float] cosine distance of the two arguments.
+    # @return [Float] cosine similarity of the two arguments.
     #   - +1.0+ if the strings are identical
     #   - +0.0+ if the strings are completely different
     #   - +0.0+ if one of the strings is empty
@@ -44,8 +49,30 @@ class String
       dot_product / magnitude
     end
 
+    # Calculate the Levenshtein similarity for two strings.
+    #
+    # This is basically the inversion of the levenshtein_distance, i.e.
+    #     1 / levenshtein_distance(str1, str2)
+    #
+    # @param str1 [String] first string
+    # @param str2 [String] second string
+    # @return [Float] levenshtein similarity of the two arguments.
+    #   - +1.0+ if the strings are identical
+    #   - +0.0+ if one of the strings is empty
+    # @see #levenshtein_distance
+    def levenshtein(str1, str2)
+      return 1.0 if str1.eql?(str2)
+      return 0.0 if str1.empty? || str2.empty?
+      return 1.0 / levenshtein_distance(str1, str2)
+    end
+
     # Calculate the {https://en.wikipedia.org/wiki/Levenshtein_distance
     # Levenshtein distance} of two strings.
+    #
+    # @param str1 [String] first string
+    # @param str2 [String] second string
+    # @return [Fixnum] edit distance between the two strings
+    #   - +0+ if the strings are identical
     def levenshtein_distance(str1, str2)
       return 0 if str1.eql?(str2)
       return str2.length if str1.empty?
@@ -66,7 +93,7 @@ class String
 
     private
 
-    # Fill in `matrix` with the edit distances needed for the Levenshtein
+    # Fill in +matrix+ with the edit distances needed for the Levenshtein
     # distance
     def fill_cost_matrix(matrix, str1, str2)
       (1..str2.length).each do |x|
@@ -82,7 +109,7 @@ class String
       matrix
     end
 
-    # get the minimum edit distance for `matrix[x][y]`
+    # get the minimum edit distance for +matrix[x][y]+
     def min_edit_distance(matrix, x, y)
       [
         matrix[x-1][ y ] + 1, # deletion
