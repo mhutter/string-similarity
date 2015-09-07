@@ -64,7 +64,7 @@ RSpec.describe String::Similarity do
       expect(klass.levenshtein('foo', '')).to eq 0.0
     end
 
-    it 'does stuff' do
+    it 'returns the inverse of the levenshtein distance' do
       expect(klass.levenshtein('kitten', 'sitting')).to eq (1.0/3)
       expect(klass.levenshtein('foo', 'far')).to eq 0.5
     end
