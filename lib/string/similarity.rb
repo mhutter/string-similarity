@@ -63,7 +63,7 @@ class String
     def levenshtein(str1, str2)
       return 1.0 if str1.eql?(str2)
       return 0.0 if str1.empty? || str2.empty?
-      return 1.0 / levenshtein_distance(str1, str2)
+      1.0 / levenshtein_distance(str1, str2)
     end
 
     # Calculate the {https://en.wikipedia.org/wiki/Levenshtein_distance
@@ -74,49 +74,35 @@ class String
     # @return [Fixnum] edit distance between the two strings
     #   - +0+ if the strings are identical
     def levenshtein_distance(str1, str2)
+      # base cases
       return 0 if str1.eql?(str2)
       return str2.length if str1.empty?
       return str1.length if str2.empty?
 
-      # Initialize cost-matrix. str1 is X, str2 is Y
-      matrix = Array.new(str2.length + 1) { Array.new(str1.length + 1) }
+      # Initialize cost-matrix rows
+      previous = (0..str2.length).to_a
+      current = []
 
-      # prepopulate zero-length edit distances
-      (str2.length + 1).times { |i| matrix[i][0] = i }
-      (str1.length + 1).times { |i| matrix[0][i] = i }
+      (0...str1.length).each do |i|
+        # first element is always the edit distance from an empty string.
+        current[0] = i + 1
+        (0...str2.length).each do |j|
+          current[j+1] = [
+            # insertion
+            current[j] + 1,
+            # deletion
+            previous[j+1] + 1,
+            # substitution or no operation
+            previous[j] + (str1[i].eql?(str2[j]) ? 0 : 1)
+          ].min
+        end
+        previous = current.dup
+      end
 
-      fill_cost_matrix(matrix, str1, str2)
-
-      # result is in the last cell
-      matrix[str2.length][str1.length]
+      current[str2.length]
     end
 
     private
-
-    # Fill in +matrix+ with the edit distances needed for the Levenshtein
-    # distance
-    def fill_cost_matrix(matrix, str1, str2)
-      (1..str2.length).each do |x|
-        (1..str1.length).each do |y|
-          if str2[x-1] == str1[y-1]
-            # no operation required
-            matrix[x][y] = matrix[x-1][y-1]
-          else
-            matrix[x][y] = min_edit_distance(matrix, x, y)
-          end
-        end
-      end
-      matrix
-    end
-
-    # get the minimum edit distance for +matrix[x][y]+
-    def min_edit_distance(matrix, x, y)
-      [
-        matrix[x-1][ y ] + 1, # deletion
-        matrix[ x ][y-1] + 1, # insertion
-        matrix[x-1][y-1] + 1, # subsitution
-      ].min
-    end
 
     # create a vector from +str+
     #
@@ -132,7 +118,7 @@ class String
     # calculate the dot product of +vector1+ and +vector2+
     def dot(vector1, vector2)
       product = 0
-      vector1.each do |k,v|
+      vector1.each do |k, v|
         product += v * vector2[k]
       end
       product
@@ -141,7 +127,7 @@ class String
     # calculate the magnitude for +vector+
     def mag(vector)
       # calculate the sum of squares
-      sq = vector.inject(0) { |s,n| s + n**2 }
+      sq = vector.inject(0) { |s, n| s + n**2 }
       Math.sqrt(sq)
     end
   end
