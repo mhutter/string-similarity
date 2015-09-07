@@ -11,14 +11,18 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Various methods for calculating string similarities.}
   spec.description   = <<-EOT
+== Description
+
 This gem provides some methods for calculating similarities of two strings.
 
-Currently implemented:
-- Cosine similarity
+=== Currently implemented
 
-Planned:
+- Cosine similarity
+- Levenshtein distance/similarity
+
+=== Planned
+
 - Hamming similarity
-- Levenshtein similarity
   EOT
   spec.homepage      = 'https://github.com/mhutter/string-similarity'
   spec.license       = 'MIT'

@@ -46,6 +46,15 @@ String::Similarity.cosine 'foo', 'foo'
 # or call on a string directly
 'string'.cosine_similarity_to 'strong'
 # => 0.8333333333333335
+
+
+# Same for Levenshtein:
+String::Similarity.levenshtein_distance('kitten', 'sitting') # or ...
+'kitten'.levenshtein_distance_to('sitting')
+# => 3
+String::Similarity.levenshtein('foo', 'far') # or ...
+'far'.levenshtein_similarity_to('foo')
+# => 0.5
 ```
 
 ## Development
