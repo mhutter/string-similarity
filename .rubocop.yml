@@ -1,0 +1,3 @@
+AllCops:
+  Exclude:
+    - lib/string/similarity/version.rb

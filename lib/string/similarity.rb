@@ -1,5 +1,6 @@
 require 'string/similarity/version'
 
+# For convenience, String is extended by a couple of helper methods
 class String
   # Returns the cosine similarity to +other+
   # @see String::Similarity#cosine
@@ -21,7 +22,7 @@ class String
 
   # +String::Similarity+ provides various methods for
   # calculating string distances.
-  module Similarity extend self
+  module Similarity
     # Calcuate the {https://en.wikipedia.org/wiki/Cosine_similarity
     # Cosine similarity} of two strings.
     #
@@ -34,12 +35,13 @@ class String
     #   - +1.0+ if the strings are identical
     #   - +0.0+ if the strings are completely different
     #   - +0.0+ if one of the strings is empty
-    def cosine(str1, str2)
+    def self.cosine(str1, str2)
       return 1.0 if str1 == str2
       return 0.0 if str1.empty? || str2.empty?
 
       # convert both texts to vectors
-      v1, v2 = vector(str1), vector(str2)
+      v1 = vector(str1)
+      v2 = vector(str2)
 
       # calculate the dot product
       dot_product = dot(v1, v2)
@@ -60,7 +62,7 @@ class String
     #   - +1.0+ if the strings are identical
     #   - +0.0+ if one of the strings is empty
     # @see #levenshtein_distance
-    def levenshtein(str1, str2)
+    def self.levenshtein(str1, str2)
       return 1.0 if str1.eql?(str2)
       return 0.0 if str1.empty? || str2.empty?
       1.0 / levenshtein_distance(str1, str2)
@@ -73,11 +75,10 @@ class String
     # @param str2 [String] second string
     # @return [Fixnum] edit distance between the two strings
     #   - +0+ if the strings are identical
-    def levenshtein_distance(str1, str2)
+    def self.levenshtein_distance(str1, str2)
       # base cases
-      return 0 if str1.eql?(str2)
-      return str2.length if str1.empty?
-      return str1.length if str2.empty?
+      result = base_case?(str1, str2)
+      return result if result
 
       # Initialize cost-matrix rows
       previous = (0..str2.length).to_a
@@ -87,11 +88,11 @@ class String
         # first element is always the edit distance from an empty string.
         current[0] = i + 1
         (0...str2.length).each do |j|
-          current[j+1] = [
+          current[j + 1] = [
             # insertion
             current[j] + 1,
             # deletion
-            previous[j+1] + 1,
+            previous[j + 1] + 1,
             # substitution or no operation
             previous[j] + (str1[i].eql?(str2[j]) ? 0 : 1)
           ].min
@@ -104,19 +105,26 @@ class String
 
     private
 
+    def self.base_case?(str1, str2)
+      return 0 if str1.eql?(str2)
+      return str2.length if str1.empty?
+      return str1.length if str2.empty?
+      false
+    end
+
     # create a vector from +str+
     #
     # @example
     #     v1 = vector('hello') # => {"h"=>1, "e"=>1, "l"=>2, "o"=>1}
     #     v1["x"] # => 0
-    def vector(str)
+    def self.vector(str)
       v = Hash.new(0)
       str.each_char { |c| v[c] += 1 }
       v
     end
 
     # calculate the dot product of +vector1+ and +vector2+
-    def dot(vector1, vector2)
+    def self.dot(vector1, vector2)
       product = 0
       vector1.each do |k, v|
         product += v * vector2[k]
@@ -125,9 +133,9 @@ class String
     end
 
     # calculate the magnitude for +vector+
-    def mag(vector)
+    def self.mag(vector)
       # calculate the sum of squares
-      sq = vector.inject(0) { |s, n| s + n**2 }
+      sq = vector.inject(0) { |a, e| a + e**2 }
       Math.sqrt(sq)
     end
   end
