@@ -10,9 +10,9 @@ Library for calculating the similarity of two strings.
 
 ## State
 
-- Cosine: **done**
-- Hamming: _todo_
-- Levenshtein: _todo_
+- [x] Cosine
+- [ ] Hamming
+- [x] Levenshtein
 
 ## Installation
 
