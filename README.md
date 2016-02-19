@@ -43,25 +43,38 @@ String::Similarity.cosine 'mine', 'thyne'
 String::Similarity.cosine 'foo', 'foo'
 # => 1.0
 
-# or call on a string directly
-'string'.cosine_similarity_to 'strong'
-# => 0.8333333333333335
-
 
 # Same for Levenshtein:
 String::Similarity.levenshtein_distance('kitten', 'sitting') # or ...
-'kitten'.levenshtein_distance_to('sitting')
 # => 3
 String::Similarity.levenshtein('foo', 'far') # or ...
+# => 0.5
+```
+
+If you want, you can use [Refinements](http://ruby-doc.org/core-2.3.0/doc/syntax/refinements_rdoc.html) to add the functionality to the `String` class:
+
+```ruby
+using String::SimilarityRefinements
+
+'string'.cosine_similarity_to 'strong'
+# => 0.8333333333333335
+
+'kitten'.levenshtein_distance_to('sitting')
+# => 3
+
 'far'.levenshtein_similarity_to('foo')
 # => 0.5
 ```
+
+(See this free [Ruby Tapas Episode](http://www.rubytapas.com/episodes/250-Refinements) if you don't know Refinements)
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
+
+This Project uses [Semantic Versioning](http://semver.org/).
 
 ## Contributing
 
