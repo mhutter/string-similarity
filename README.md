@@ -33,7 +33,7 @@ Or install it yourself as:
 ## Usage
 
 ```ruby
-require 'string-similarity'
+require 'string/similarity'
 
 # Call the methods on the module
 String::Similarity.cosine 'foo', 'bar'
