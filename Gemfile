@@ -4,8 +4,8 @@ source 'https://rubygems.org'
 gemspec
 
 group :test do
-  gem 'codeclimate-test-reporter', require: nil
   gem 'guard'
   gem 'guard-rspec'
   gem 'growl'
+  gem 'simplecov', :require => false
 end

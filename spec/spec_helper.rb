@@ -1,12 +1,8 @@
-require 'simplecov'
+require "simplecov"
 SimpleCov.add_filter '.bundle'
 SimpleCov.add_filter 'spec'
-if ENV['CODECLIMATE_REPO_TOKEN']
-  require 'codeclimate-test-reporter'
-  CodeClimate::TestReporter.start
-else
-  SimpleCov.start
-end
+SimpleCov.start
+
 require 'string/similarity'
 
 RSpec.configure do |config|
