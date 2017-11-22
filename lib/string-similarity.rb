@@ -1,1 +1,1 @@
-# require 'string/similarity'
+require 'string/similarity'
