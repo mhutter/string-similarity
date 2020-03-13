@@ -12,17 +12,18 @@ module String::Similarity
   #
   # @param str1 [String] first string
   # @param str2 [String] second string
+  # @param ngram [Int] how many characters at once to use
   # @return [Float] cosine similarity of the two arguments.
   #   - +1.0+ if the strings are identical
   #   - +0.0+ if the strings are completely different
   #   - +0.0+ if one of the strings is empty
-  def self.cosine(str1, str2)
+  def self.cosine(str1, str2, ngram: 1)
     return 1.0 if str1 == str2
     return 0.0 if str1.empty? || str2.empty?
 
     # convert both texts to vectors
-    v1 = vector(str1)
-    v2 = vector(str2)
+    v1 = vector(str1, ngram)
+    v2 = vector(str2, ngram)
 
     # calculate the dot product
     dot_product = dot(v1, v2)

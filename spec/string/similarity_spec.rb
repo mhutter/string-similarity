@@ -54,6 +54,37 @@ RSpec.describe String::Similarity do
                  })
       end
     end
+
+    context 'with n-grams' do
+      it 'returns 1-gram similarity same as default' do
+        s1 = klass.cosine('foo', 'boo')
+        s2 = klass.cosine('foo', 'boo', ngram: 1)
+
+        expect(s1).to eq s2
+      end
+      it 'returns correct 2-gram similarity' do
+        # here _ is substitution for the pad symbol
+        # abc has bigrams: _a, ab, bc, c_
+        # abcacbc has bigrams: _a, ab, bc, ca, ac, cb, bc, c_
+
+        expect(klass.cosine('abc', 'abcacbc',
+                            ngram: 2)).to be_within(0.001).of(0.79)
+      end
+
+      it 'returns correct 3-gram similarity' do
+        # here _ is substitution for the pad symbol
+        # abc has bigrams: __a, _ab, abc, bc_, c__
+        # abcacbc has bigrams: __a, _ab, abc, bca, cac, acb, cbc, bc_, c__
+
+        expect(klass.cosine('abc', 'abcacbc',
+                            ngram: 3)).to be_within(0.001).of(0.745)
+      end
+
+      it 'raises if n is < 1' do
+        expect { klass.cosine('a', 'b',
+                              ngrams: 0) }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   context '#levenshtein_distance' do
