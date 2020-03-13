@@ -94,13 +94,32 @@ module String::Similarity
   end
 
   # create a vector from +str+
+  # keys have a special format:
+  #     '[left padding, right padding, "string"]'
   #
   # @example
-  #     v1 = vector('hello') # => {"h"=>1, "e"=>1, "l"=>2, "o"=>1}
-  #     v1["x"] # => 0
-  def self.vector(str)
+  #     v1 = vector('aba', 1) # => {'[0, 0, "a"]' => 2, '[0, 0, "b"]' => 1}
+  #     v1['[0, 0, "x"]'] # => 0
+  # @example
+  #     vector('abacaba', 2) # => {
+  #       #  '[1, 0, "a"]' => 1,
+  #       #  '[0, 0, "ab"]' => 2,
+  #       #  '[0, 0, "ba"]' => 2,
+  #       #  '[0, 0, "ac"]' => 1,
+  #       #  '[0, 1, "a"]' => 1
+  #       # }
+  def self.vector(str, ngram)
     v = Hash.new(0)
-    str.each_char { |c| v[c] += 1 }
+
+    ((1 - ngram)..(str.length - 1)).each do |i|
+      before = [-i, 0].max
+      after = [ngram - (str.length - i), 0].max
+      slice = str[[i, 0].max .. [i + ngram - 1, str.length - 1].min]
+      key = [before, after, slice].to_s
+
+      v[key] += 1
+    end
+
     v
   end
 

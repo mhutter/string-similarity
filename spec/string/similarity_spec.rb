@@ -31,6 +31,29 @@ RSpec.describe String::Similarity do
     it 'returns values <= 1.0' do
       expect(klass.cosine('foo', 'fooaf')).to be <= 1.00000
     end
+
+    context 'vector', :vector do
+      it 'returns 1-gram vectors' do
+        expect(klass.send(:vector, 'abacaba', 1))
+          .to eq({
+                   '[0, 0, "a"]' => 4,
+                   '[0, 0, "b"]' => 2,
+                   '[0, 0, "c"]' => 1
+                 })
+      end
+
+      it 'returns 2-gram vectors' do
+        expect(klass.send(:vector, 'abacaba', 2))
+          .to eq({
+                   '[1, 0, "a"]' => 1,
+                   '[0, 0, "ab"]' => 2,
+                   '[0, 0, "ba"]' => 2,
+                   '[0, 0, "ac"]' => 1,
+                   '[0, 0, "ca"]' => 1,
+                   '[0, 1, "a"]' => 1
+                 })
+      end
+    end
   end
 
   context '#levenshtein_distance' do
