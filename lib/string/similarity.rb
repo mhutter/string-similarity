@@ -107,6 +107,7 @@ module String::Similarity
   #       #  '[0, 0, "ab"]' => 2,
   #       #  '[0, 0, "ba"]' => 2,
   #       #  '[0, 0, "ac"]' => 1,
+  #       #  '[0, 0, "ca"]' => 1
   #       #  '[0, 1, "a"]' => 1
   #       # }
   def self.vector(str, ngram)
