@@ -18,6 +18,8 @@ module String::Similarity
   #   - +0.0+ if the strings are completely different
   #   - +0.0+ if one of the strings is empty
   def self.cosine(str1, str2, ngram: 1)
+    raise ArgumentError.new('ngram should be >= 1') if ngram < 1
+
     return 1.0 if str1 == str2
     return 0.0 if str1.empty? || str2.empty?
 
