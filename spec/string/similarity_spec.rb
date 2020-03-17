@@ -31,6 +31,60 @@ RSpec.describe String::Similarity do
     it 'returns values <= 1.0' do
       expect(klass.cosine('foo', 'fooaf')).to be <= 1.00000
     end
+
+    context 'vector', :vector do
+      it 'returns 1-gram vectors' do
+        expect(klass.send(:vector, 'abacaba', 1))
+          .to eq({
+                   '[0, 0, "a"]' => 4,
+                   '[0, 0, "b"]' => 2,
+                   '[0, 0, "c"]' => 1
+                 })
+      end
+
+      it 'returns 2-gram vectors' do
+        expect(klass.send(:vector, 'abacaba', 2))
+          .to eq({
+                   '[1, 0, "a"]' => 1,
+                   '[0, 0, "ab"]' => 2,
+                   '[0, 0, "ba"]' => 2,
+                   '[0, 0, "ac"]' => 1,
+                   '[0, 0, "ca"]' => 1,
+                   '[0, 1, "a"]' => 1
+                 })
+      end
+    end
+
+    context 'with n-grams' do
+      it 'returns 1-gram similarity same as default' do
+        s1 = klass.cosine('foo', 'boo')
+        s2 = klass.cosine('foo', 'boo', ngram: 1)
+
+        expect(s1).to eq s2
+      end
+      it 'returns correct 2-gram similarity' do
+        # here _ is substitution for the pad symbol
+        # abc has bigrams: _a, ab, bc, c_
+        # abcacbc has bigrams: _a, ab, bc, ca, ac, cb, bc, c_
+
+        expect(klass.cosine('abc', 'abcacbc',
+                            ngram: 2)).to be_within(0.001).of(0.79)
+      end
+
+      it 'returns correct 3-gram similarity' do
+        # here _ is substitution for the pad symbol
+        # abc has bigrams: __a, _ab, abc, bc_, c__
+        # abcacbc has bigrams: __a, _ab, abc, bca, cac, acb, cbc, bc_, c__
+
+        expect(klass.cosine('abc', 'abcacbc',
+                            ngram: 3)).to be_within(0.001).of(0.745)
+      end
+
+      it 'raises if n is < 1' do
+        expect { klass.cosine('a', 'b',
+                              ngrams: 0) }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   context '#levenshtein_distance' do

@@ -12,17 +12,20 @@ module String::Similarity
   #
   # @param str1 [String] first string
   # @param str2 [String] second string
+  # @param ngram [Int] how many characters at once to use
   # @return [Float] cosine similarity of the two arguments.
   #   - +1.0+ if the strings are identical
   #   - +0.0+ if the strings are completely different
   #   - +0.0+ if one of the strings is empty
-  def self.cosine(str1, str2)
+  def self.cosine(str1, str2, ngram: 1)
+    raise ArgumentError.new('ngram should be >= 1') if ngram < 1
+
     return 1.0 if str1 == str2
     return 0.0 if str1.empty? || str2.empty?
 
     # convert both texts to vectors
-    v1 = vector(str1)
-    v2 = vector(str2)
+    v1 = vector(str1, ngram)
+    v2 = vector(str2, ngram)
 
     # calculate the dot product
     dot_product = dot(v1, v2)
@@ -94,13 +97,33 @@ module String::Similarity
   end
 
   # create a vector from +str+
+  # keys have a special format:
+  #     '[left padding, right padding, "string"]'
   #
   # @example
-  #     v1 = vector('hello') # => {"h"=>1, "e"=>1, "l"=>2, "o"=>1}
-  #     v1["x"] # => 0
-  def self.vector(str)
+  #     v1 = vector('aba', 1) # => {'[0, 0, "a"]' => 2, '[0, 0, "b"]' => 1}
+  #     v1['[0, 0, "x"]'] # => 0
+  # @example
+  #     vector('abacaba', 2) # => {
+  #       #  '[1, 0, "a"]' => 1,
+  #       #  '[0, 0, "ab"]' => 2,
+  #       #  '[0, 0, "ba"]' => 2,
+  #       #  '[0, 0, "ac"]' => 1,
+  #       #  '[0, 0, "ca"]' => 1
+  #       #  '[0, 1, "a"]' => 1
+  #       # }
+  def self.vector(str, ngram)
     v = Hash.new(0)
-    str.each_char { |c| v[c] += 1 }
+
+    ((1 - ngram)..(str.length - 1)).each do |i|
+      before = [-i, 0].max
+      after = [ngram - (str.length - i), 0].max
+      slice = str[[i, 0].max .. [i + ngram - 1, str.length - 1].min]
+      key = [before, after, slice].to_s
+
+      v[key] += 1
+    end
+
     v
   end
 
